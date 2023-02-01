@@ -1,0 +1,204 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FE2 Module Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+   * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+ 
+/* Hidden class */
+.hidden{
+    display:none;
+}
+ 
+/* image styling */
+.img {
+  width: 200px;
+  height: 200px;
+  margin: 1rem;
+}
+ 
+.flex-container{
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+}
+ 
+/* Form group */
+ 
+.form-Group{
+    margin: 1.5rem;
+} 
+</style>
+<body>
+ 
+    <!-- Images with Flex Box -->
+    <div class="flex-container">
+        <div>
+            <button id="img-1" onclick="openFormFunction()"><img class="img" src="p.jpg" alt="img1" ></button>
+        </div>
+ 
+        <div>
+            <button id="img-2" onclick="displayFormInfoFunction()"><img class="img" src="p1.png" alt="img2" ></button>
+        </div>
+ 
+        <div>
+            <button id="img-3" onclick="displayDiceWthScore()"><img class="img" src="p2.png" alt="img3" ></button>
+        </div>
+ 
+        <div>
+            <button id="img-4" onclick="generateCouponCodeFunction()"><img class="img" src="website.jpg" alt="img4" ></button>
+        </div>
+    </div>
+ 
+   
+    <div class="form-Group hidden" id="form">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+ 
+        <label for="userName">User Name</label>
+        <input type="text" id="userName" required>
+ 
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+ 
+        <button type="submit" onclick="submitFormInfoFunction()">Submit</button>
+    </div>
+ 
+    
+    <div class="displayformInfo hidden" id="displayInfo">
+        <p>Your info is: <span id="info"></span></p>
+    </div>
+ 
+    
+    <div class="diceWthScore hidden" id="diceWthScore">
+        <p>Attempts left : <span id="attemptsLeft">0</span></p>
+        <div>
+            <button id="dice-Image" onclick="diceClick()"><img class="img" src="img\dice-Image.jpg" alt="diceImage"></button>
+            <p>Remaining Dice Clicks: <span id="diceClicks">3</span></p>
+            <p>Your total score is: <span id="score">0</span></p>
+        </div>
+    </div>
+ 
+    <div class="hidden" id="congratsImage">
+ 
+    </div>
+    <script>
+        let formInfoArray = [];
+         
+        
+        let diceScore = [];
+         
+        
+        let attempt = 2;
+        let RemainingDiceClick = 3;
+        let totalScore = 0;
+         
+        
+        function openFormFunction() {
+            document.getElementById('form').classList.remove('hidden');
+        }
+         
+       
+        function submitFormInfoFunction() {
+            let name = document.getElementById('name').value;
+            let userName = document.getElementById('userName').value;
+            let email = document.getElementById('email').value;
+            if (name && userName && email) {
+                let obj = {
+                    Name: name,
+                    UserName: userName,
+                    Email: email,
+                }
+         
+                formInfoArray.push(obj);
+                document.getElementById("img-2").disabled = false;
+                document.getElementById("img-1").disabled = true;
+                alert('Your Info is Submitted successfully! Click on the next image to view your info.')
+                document.getElementById('form').classList.add('hidden');
+                // console.log(formInfoArray);
+            } else {
+                alert(`Please fill all the fields.`)
+            }
+        }
+         
+         
+        // Image 2 Function : Display form info 
+        function displayFormInfoFunction() {
+            document.getElementById('info').innerText = `Name:${formInfoArray[0].Name}, User Name:${formInfoArray[0].UserName}, Email:${formInfoArray[0].Email}`
+            document.getElementById('displayInfo').classList.remove('hidden');
+            document.getElementById("img-3").disabled = false;
+            document.getElementById("img-2").disabled = true;
+        }
+         
+        // Image 3 Function : Display dice image with attempt no
+        function displayDiceWthScore() {
+            document.getElementById('displayInfo').classList.add('hidden');
+            attempt--;
+            console.log(`attempt remaining= ${attempt}`);
+            document.getElementById('attemptsLeft').innerText = attempt;
+            document.getElementById('diceWthScore').classList.remove('hidden');
+            document.getElementById("img-3").disabled = true;
+         
+        }
+         
+        // DiceClick function: this function keeps track of total score. If TS > 10 after 3 dice clicks it should enabled 4th image else alert to click on 3rd image
+         
+        function diceClick() {
+            RemainingDiceClick--;
+            document.getElementById('diceClicks').innerText = RemainingDiceClick;
+            let randomNo = Math.floor(Math.random() * 6) + 1;
+            totalScore += randomNo;
+            document.getElementById('score').innerText = totalScore;
+            // console.log(`RemainingDiceClick = ${RemainingDiceClick}`);
+            // console.log(`randomNo generated is   ${randomNo}`);
+            // console.log(`totalScore = ${totalScore}`);
+            if (RemainingDiceClick === 0) {
+                document.getElementById("dice-Image").disabled = true;
+                document.getElementById('score').innerText = totalScore;
+                if (totalScore >= 10) {
+                    alert('Yehhh Congratulations 🎉🎉🎊🎊😊😊!!! Your total score is greater than 10. Click on next Image to avail your coupon code.');
+                    document.getElementById('diceWthScore').classList.add('hidden');
+                    document.getElementById("img-4").disabled = false;
+                } else {
+                    if (attempt != 0) {
+                        // document.getElementById('score').innerText = totalScore;
+                        alert('O Ohhh!!! Your score is less than 10. Try once again!!');
+                        document.getElementById("img-3").disabled = false;
+                        RemainingDiceClick = 3;
+                        totalScore = 0;
+                        document.getElementById("dice-Image").disabled = false;
+                        document.getElementById('diceWthScore').classList.add('hidden');
+                        console.log(`RemainingDiceClick = ${RemainingDiceClick}`);
+                        console.log(`totalScore = ${totalScore}`);
+         
+                    } else {
+                        document.getElementById('score').innerText = totalScore;
+                        alert('Sorry Bad luck 🥹🥹🥹!!! You have exausted all your attempts. Please Start from begining!!!!');
+                    }
+                }
+            }
+        }
+         
+        // Image 4 Function : Generate 12 digit coupon code when clicked on image 4 and alert it.
+         
+        function generateCouponCodeFunction() {
+            document.getElementById("img-4").disabled = true;
+            let coupon = '';
+            for (let i = 0; i < 12; i++) {
+                coupon += Math.floor(Math.random() * 10);
+            }
+            alert(`Congratulations 🎉🎉🎊🎊😊😊!!! You have successfully generated a coupon. Your coupon code is ${coupon}`)
+        } </script>
+</body>
+</html>
+ 
+ 
